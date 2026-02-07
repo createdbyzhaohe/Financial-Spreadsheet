@@ -1,10 +1,8 @@
-
 export interface ExpenseItem {
   id: string;
   category: string;
   name: string;
   amount: number;
-  included: boolean;
 }
 
 export enum Category {
@@ -23,10 +21,15 @@ export interface SummaryData {
   monthlyTotal: number;
 }
 
+export interface SavedItem {
+  category: string;
+  name: string;
+  amount: number;
+}
+
 export interface SavedRecord {
   id: string;
   date: string;
-  monthlyTotal: number;
-  savingsTotal: number;
-  details: string; 
+  items: SavedItem[];
+  summary: SummaryData;
 }

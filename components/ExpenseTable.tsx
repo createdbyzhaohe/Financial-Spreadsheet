@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { ExpenseItem } from '../types';
@@ -37,10 +36,9 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({
       <table className="w-full text-left">
         <thead className="text-xs text-gray-500 uppercase">
           <tr>
-            <th className="px-3 py-2 font-medium">項目</th>
-            <th className="px-3 py-2 font-medium">金額</th>
-            <th className="px-3 py-2 font-medium text-center">列入</th>
-            <th className="px-2 py-2"></th>
+            <th className="px-3 py-2 font-medium w-3/5">項目</th>
+            <th className="px-3 py-2 font-medium w-1/4">金額</th>
+            <th className="px-2 py-2 w-10"></th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100 bg-white/30">
@@ -64,14 +62,6 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({
                   className="w-full bg-transparent border-none focus:ring-0 text-gray-700 font-medium py-1"
                 />
               </td>
-              <td className="px-3 py-2 text-center">
-                <input 
-                  type="checkbox" 
-                  checked={item.included} 
-                  onChange={(e) => onUpdate(item.id, { included: e.target.checked })}
-                  className="rounded border-gray-300 text-pink-600 focus:ring-pink-500"
-                />
-              </td>
               <td className="px-2 py-2">
                 <button 
                   onClick={() => onDelete(item.id)}
@@ -84,7 +74,7 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({
           ))}
           {items.length === 0 && (
             <tr>
-              <td colSpan={4} className="px-3 py-8 text-center text-gray-400 text-sm">
+              <td colSpan={3} className="px-3 py-8 text-center text-gray-400 text-sm">
                 尚無項目，點擊右上角新增
               </td>
             </tr>
