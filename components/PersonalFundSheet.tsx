@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Table, Trash2, Calendar, Download } from 'lucide-react';
+import { Table, Trash2, Calendar, Download, Wallet, TrendingUp } from 'lucide-react';
 import { SavedRecord } from '../types';
 
 interface PersonalFundSheetProps {
@@ -16,16 +16,15 @@ const PersonalFundSheet: React.FC<PersonalFundSheetProps> = ({ records, onDelete
       return;
     }
 
-    // 定義 CSV 標頭
-    const headers = ['日期', '月標準支出', '準備月數', '預備金目標', '備註'];
+    // 定義 CSV 標頭：日期, 總支出, 總存錢, 備註
+    const headers = ['日期', '總支出', '總存錢', '備註'];
     
     // 轉換資料列
     const csvRows = records.map(record => [
       `"${record.date}"`,
       record.monthlyTotal,
-      record.multiplier,
-      record.targetFund,
-      `"${record.details.replace(/"/g, '""')}"` // 處理雙引號避免 CSV 格式錯誤
+      record.savingsTotal,
+      `"${record.details.replace(/"/g, '""')}"`
     ]);
 
     // 合併標頭與內容
@@ -34,11 +33,10 @@ const PersonalFundSheet: React.FC<PersonalFundSheetProps> = ({ records, onDelete
       ...csvRows.map(row => row.join(','))
     ].join('\n');
 
-    // 加入 BOM (Byte Order Mark) 確保 Excel 開啟時能正確辨識繁體中文 (UTF-8)
+    // 加入 BOM 確保 Excel 開啟時能正確辨識繁體中文
     const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     
-    // 建立虛擬連結並點擊下載
     const link = document.createElement('a');
     link.setAttribute('href', url);
     link.setAttribute('download', `個人資金管理_${new Date().toLocaleDateString().replace(/\//g, '-')}.csv`);
@@ -61,12 +59,10 @@ const PersonalFundSheet: React.FC<PersonalFundSheetProps> = ({ records, onDelete
           <button
             onClick={exportToCSV}
             className="flex items-center space-x-2 bg-slate-700 hover:bg-slate-600 text-blue-400 px-4 py-2 rounded-xl text-sm font-bold transition-all border border-slate-600"
-            title="匯出為 CSV 檔案以供 Excel 使用"
           >
             <Download className="w-4 h-4" />
             <span>匯出 CSV</span>
           </button>
-          <span className="text-slate-400 text-sm hidden sm:inline">歷史試算紀錄清單</span>
         </div>
       </div>
       
@@ -75,10 +71,19 @@ const PersonalFundSheet: React.FC<PersonalFundSheetProps> = ({ records, onDelete
           <thead>
             <tr className="bg-slate-50 border-b border-gray-100">
               <th className="px-6 py-4 text-sm font-semibold text-slate-600">日期</th>
-              <th className="px-6 py-4 text-sm font-semibold text-slate-600">月標準支出</th>
-              <th className="px-6 py-4 text-sm font-semibold text-slate-600">準備月數</th>
-              <th className="px-6 py-4 text-sm font-semibold text-slate-600">預備金目標</th>
-              <th className="px-6 py-4 text-sm font-semibold text-slate-600">備註</th>
+              <th className="px-6 py-4 text-sm font-semibold text-slate-600">
+                <div className="flex items-center">
+                  <Wallet className="w-4 h-4 mr-1 text-red-400" />
+                  總支出 (Expense)
+                </div>
+              </th>
+              <th className="px-6 py-4 text-sm font-semibold text-slate-600">
+                <div className="flex items-center">
+                  <TrendingUp className="w-4 h-4 mr-1 text-green-400" />
+                  總存錢 (Savings)
+                </div>
+              </th>
+              <th className="px-6 py-4 text-sm font-semibold text-slate-600">備註 (包含項目)</th>
               <th className="px-6 py-4 text-sm font-semibold text-slate-600 text-center">操作</th>
             </tr>
           </thead>
@@ -92,14 +97,11 @@ const PersonalFundSheet: React.FC<PersonalFundSheetProps> = ({ records, onDelete
                       {record.date}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm font-medium text-slate-700">
+                  <td className="px-6 py-4 text-sm font-bold text-slate-700">
                     ${record.monthlyTotal.toLocaleString()}
                   </td>
-                  <td className="px-6 py-4 text-sm text-slate-600">
-                    {record.multiplier} 個月
-                  </td>
-                  <td className="px-6 py-4 text-sm font-bold text-pink-600">
-                    ${record.targetFund.toLocaleString()}
+                  <td className="px-6 py-4 text-sm font-bold text-green-600">
+                    ${record.savingsTotal.toLocaleString()}
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-400 max-w-xs truncate">
                     {record.details}
@@ -108,7 +110,6 @@ const PersonalFundSheet: React.FC<PersonalFundSheetProps> = ({ records, onDelete
                     <button 
                       onClick={() => onDelete(record.id)}
                       className="text-slate-300 hover:text-red-500 transition-colors p-1"
-                      title="刪除此紀錄"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -117,8 +118,8 @@ const PersonalFundSheet: React.FC<PersonalFundSheetProps> = ({ records, onDelete
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-slate-400 italic">
-                  目前尚無存檔紀錄，點擊上方「確認並存檔」來新增您的第一筆試算。
+                <td colSpan={5} className="px-6 py-12 text-center text-slate-400 italic">
+                  目前尚無存檔紀錄，點擊右上方「確認並存檔」來新增您的第一筆試算。
                 </td>
               </tr>
             )}

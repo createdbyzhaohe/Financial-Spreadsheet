@@ -1,24 +1,20 @@
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { ExpenseItem, Category, SavedRecord } from './types';
 import ExpenseTable from './components/ExpenseTable';
 import SummarySection from './components/SummarySection';
-import AIAdvice from './components/AIAdvice';
 import PersonalFundSheet from './components/PersonalFundSheet';
 
 const INITIAL_EXPENSES: ExpenseItem[] = [
-  // Fixed
   { id: '1', category: Category.FIXED, name: '手機費', amount: 699, included: true },
   { id: '2', category: Category.FIXED, name: '房租', amount: 12000, included: true },
   { id: '3', category: Category.FIXED, name: '保費', amount: 4583, included: true },
   { id: '4', category: Category.FIXED, name: '定期定額投資', amount: 5000, included: true },
-  // Living
   { id: '5', category: Category.LIVING, name: '餐費', amount: 9000, included: true },
   { id: '6', category: Category.LIVING, name: '日常用品', amount: 2000, included: true },
   { id: '7', category: Category.LIVING, name: '交通費', amount: 1500, included: true },
-  // Savings
-  { id: '10', category: Category.SAVINGS, name: '緊急預備金存款', amount: 5000, included: true },
+  { id: '10', category: Category.SAVINGS, name: '預備金存款', amount: 5000, included: true },
   { id: '11', category: Category.SAVINGS, name: '旅遊基金', amount: 2000, included: true },
-  // Debt
   { id: '14', category: Category.LONG_TERM_DEBT, name: '學貸', amount: 3500, included: true },
 ];
 
@@ -84,8 +80,6 @@ const App: React.FC = () => {
       date: new Date().toLocaleDateString('zh-TW'),
       monthlyTotal: summary.monthlyTotal,
       savingsTotal: summary.savingsTotal,
-      targetFund: 0, // No longer used in UI but kept in type for compatibility
-      multiplier: 0, 
       details: expenses.filter(e => e.included && e.amount > 0).map(e => e.name).join(', ')
     };
     setSavedRecords([newRecord, ...savedRecords]);
@@ -100,7 +94,7 @@ const App: React.FC = () => {
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12">
       <header className="text-center">
         <h1 className="text-4xl font-extrabold text-pink-700 mb-2 tracking-tight">
-          預算分配
+          預算分配計算器
         </h1>
         <p className="text-pink-600 font-medium">清晰掌握每一分錢的去向</p>
       </header>
@@ -165,16 +159,19 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        <div className="lg:col-span-4 space-y-6">
+        <div className="lg:col-span-4">
           <SummarySection 
             summary={summary} 
             onConfirm={handleConfirm}
           />
-          <AIAdvice expenses={expenses} summary={summary} />
         </div>
       </div>
 
       <div className="mt-8">
         <PersonalFundSheet records={savedRecords} onDelete={handleDeleteRecord} />
       </div>
+    </div>
+  );
+};
 
+export default App;

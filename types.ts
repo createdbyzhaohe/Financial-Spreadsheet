@@ -1,3 +1,4 @@
+
 export interface ExpenseItem {
   id: string;
   category: string;
@@ -27,7 +28,5 @@ export interface SavedRecord {
   date: string;
   monthlyTotal: number;
   savingsTotal: number;
-  targetFund: number;
-  multiplier: number;
   details: string; 
 }
