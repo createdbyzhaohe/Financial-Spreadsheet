@@ -1,9 +1,8 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
-import { ExpenseItem, Category, SavedRecord } from './types';
-import ExpenseTable from './components/ExpenseTable';
-import SummarySection from './components/SummarySection';
-import PersonalFundSheet from './components/PersonalFundSheet';
+import { ExpenseItem, Category, SavedRecord } from './types.ts';
+import ExpenseTable from './components/ExpenseTable.tsx';
+import SummarySection from './components/SummarySection.tsx';
+import PersonalFundSheet from './components/PersonalFundSheet.tsx';
 
 const INITIAL_EXPENSES: ExpenseItem[] = [
   { id: '1', category: Category.FIXED, name: '手機費', amount: 699, included: true },
